@@ -1,2 +1,3 @@
 ipykernel
 yt-dlp
+requests

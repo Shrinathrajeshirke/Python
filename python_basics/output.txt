@@ -1,4 +1,2 @@
-Hi
-line2
-nextline
-Hey
+Hello
+World
