@@ -1,3 +1,5 @@
 ipykernel
 yt-dlp
 requests
+pandas
+numpy
