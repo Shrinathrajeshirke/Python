@@ -3,3 +3,6 @@ yt-dlp
 requests
 pandas
 numpy
+flask
+streamlit
+scikit-learn
