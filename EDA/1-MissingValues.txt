@@ -1,0 +1,23 @@
+--- Missing completely at Random (MCAR) ---
+-- there is no systematic reason for missing data
+
+--- Missing at Random (MAR) ---
+-- missing values are systematically related to observed data but not to missing data
+
+--- Missing data not at random (MNAR) ---
+-- missingness is not random and is dependent on unobserved factors that are associated with missing values
+
+--- Techniques to handle missing data ---
+1. check missing values -- df.isnull().sum()
+2. delete the rows -- df.dropna()
+3. delete the columns -- df.dropna(axis=1, inplace=True)
+4. imputation techniques
+	1. mean value imputation - df['col_mean']=df['col'].fillna(df['col'].mean())
+	- Used when data is normally distributed
+	2. median value imputation - df['col_median'] = df['col'].fillna(df['col'].median())
+	- used when data is not symmetrical
+	3. mode imputation - 
+	- mode_val = df[df['col'].notna()]['col'].mode()[0]
+	- df['col_mode'] = df.fillna(mode_val)
+	- used for categorical values
+ 

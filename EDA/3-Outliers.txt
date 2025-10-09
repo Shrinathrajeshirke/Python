@@ -1,0 +1,9 @@
+--- 5-Number summary ---
+- min, q1, md, q3, max = np.quantile(data, [0,0.25,05,0.75,1.0])
+- IQR = Q3-Q1
+- Lower fence : Q1 - 1.5IQR
+- Upper fence : Q3 + 1.5IQR
+
+-- Boxplot : used to check outliers
+import seaborn as sns
+sns.boxplot(data)

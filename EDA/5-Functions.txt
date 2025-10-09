@@ -1,0 +1,16 @@
+-- df.info() : consice summary of df, features, dtype, null or non-null
+-- df.describe() : descriptive number summary and count of features
+-- df.shape : shape of dataframe
+-- df.columns : columns in df
+-- df['col'].unique(): unique categories in column
+-- df.isnull().sum(): to check missing values
+-- df.duplicated(): to check duplicate records
+-- df.drop_duplicates(inplace=True): to drop duplicates
+-- df.corr(): to check correlation
+-- sns.heatmap(df.corr, annot=True): to get visualization of correlation
+-- df.col.value_counts(): to get frequency of categories in a column
+-- df.col.value_count().plot(kind='bar'): to plot the freq 
+-- sns.histplot(df[col],kde=True): to plot histogram
+-- sns.pairplot(df) : for multivariate analysis
+-- sns.catplot(x='',y='',data=df, kind='boxplot'): categorical plot
+-- sns.scatterplot(x='',y='',hue='',data=df)

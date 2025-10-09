@@ -6,3 +6,6 @@ numpy
 flask
 streamlit
 scikit-learn
+seaborn 
+matplotlib
+openpyxl

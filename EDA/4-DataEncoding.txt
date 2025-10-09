@@ -1,0 +1,35 @@
+--- Nominal/One Hot Encoding ---
+- used to represent categorical data as numerical data
+- each category is represented as a binary vector where each bit corresponds to unqiue category
+- from sklearn.preprocessing import OneHotEncoder
+- create an instance of onehotencoder
+	encoder = OneHotEncoder()
+- perform fit and transform
+	encoded = encoder.fit_transform(df[['col']].to_array()
+	encoded_df = pd.DataFrame(encoded, columns=encoder.get_feature_names_out())
+	pd.concat([df, encoded_df], axis=1)
+
+--- Label Encoding ---
+- involves assigning a unique numerical label to each category in the variable
+- labels are assigned in alphabetical order or based on the frequency of the categories
+- from sklearn.preprocessing import LabelEncoder
+- create an instance
+	encoder_lbl = LabelEncoder()
+	encoded = encoder.fit_transform(df[['col']])
+	encoded_df = pd.DataFrame(encoded, columns-encoder.get_feature_names_out())
+	pd.concat([df, encoded_df],axis=1)
+
+--- Ordinal Encoding ---
+- used to encode data that have an order or ranking
+- from sklearn.preprocessing import OrdinalEncoder
+- create an instance
+	encoder_ord = OrdinalEncoder(categories=[['first','second','third']])
+	encoded = encoder.fit_transform(df[['col']])
+	encoded_df = pd.DataFrame(encoded, columns-encoder.get_feature_names_out())
+	pd.concat([df, encoded_df],axis=1)
+
+--- Target Guided Ordinal Encoding ---
+- encode categorical variables based on their relationship with the target variable
+- we replace each category in the categorical variable with a numerical value based on the mean or median of the target variable for that category
+- mean_values = df.groupby('feature')['value'].mean().to_dict()
+- df['feature_encoded']=df['feature'].map(mean_values)

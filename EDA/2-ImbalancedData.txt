@@ -1,0 +1,29 @@
+--- Imbalanced data ---
+- When the classes in dataset are not represented equally.
+- whenn one class (the majority class) significantly outnumbers the other classes (the minority class)
+
+-- Ways to handle imbalanced data --
+1. up sampling
+steps -
+	1. divide data into minority and majority
+	df_minority = df[df['target']==1]
+	df_majority = df[df['target']==0] #depends on values of 0s and 1s
+	2. from sklearn.utiils import resample
+	   df_up_sampled = resample(df_minority, replace=True, n_samples = len(df_majority), random_state=42)
+	3. pd.concat([df_majority, df_up_sampled])
+2. Down sampling
+steps -
+	1. divide data into minority and majority
+	df_minority = df[df['target']==1]
+	df_majority = df[df['target']==0] #depends on values of 0s and 1s
+	2. from sklearn.utiils import resample
+	   df_down_sampled = resample(df_majority, n_samples = len(df_minority), random_state=42)
+	3. pd.concat([df_minority, df_down_sampled])
+3. SMOTE (Synthetic Minority Oversampling Technique)
+- used where the minority class has significantly fewer instances than the majority class
+- involves generating synthetic instances of the minority class by interpolating betn existing instances
+- Steps:
+	1. from imblearn.over_sampling import SMOTE
+	2. transform the datasets
+	oversample = SMOTE()
+	X,y = oversample.fir_resample(df[['independent cols']],df['target'])
