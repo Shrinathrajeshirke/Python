@@ -1,0 +1,49 @@
+1. Supervised Learning 
+Definition: Learning from labeled data where you know the correct answers.
+How it works: You train the model with input-output pairs, and it learns to predict outputs for new inputs.
+Example - House Price Prediction:
+
+Training Data: Houses with features (size, bedrooms, location) AND their actual prices
+Goal: Predict the price of a new house based on its features
+The model learns the relationship between features and prices from labeled examples
+
+Common Algorithms:
+
+Linear Regression (predicting continuous values)
+Logistic Regression (classification)
+Decision Trees, Random Forests
+Neural Networks
+
+2. Unsupervised Learning 
+Definition: Learning from unlabeled data where you don't have correct answers.
+How it works: The model finds hidden patterns, groupings, or structures in the data on its own.
+Example - Customer Segmentation:
+
+Data: Customer purchase history (what they bought, how much they spent, frequency)
+Goal: Group similar customers together without being told which groups exist
+The model discovers that customers naturally fall into groups like "budget shoppers," "luxury buyers," "occasional purchasers"
+
+Common Algorithms:
+
+K-Means Clustering
+Hierarchical Clustering
+Principal Component Analysis (PCA)
+Anomaly Detection
+
+3. Reinforcement Learning 
+Definition: Learning through trial and error by receiving rewards or penalties.
+How it works: An agent takes actions in an environment, receives feedback (rewards/penalties), and learns the best strategy over time.
+Example - Teaching a Robot to Walk:
+
+Agent: The robot
+Environment: The ground/terrain
+Actions: Moving legs forward, backward, adjusting balance
+Rewards: +10 points for each step forward, -5 points for falling
+Learning: The robot tries different leg movements, falls many times (penalty), but gradually learns which movements keep it balanced and moving forward (rewards)
+
+Key Components:
+
+State: Current situation (robot's position, balance)
+Action: What the agent can do (move leg, shift weight)
+Reward: Feedback signal (positive or negative)
+Policy: Strategy the agent learns (what action to take in each state)
