@@ -10,3 +10,4 @@ seaborn
 matplotlib
 openpyxl
 statsmodel
+plotly

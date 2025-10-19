@@ -1,0 +1,21 @@
+step 1- create a folder .ebextensions
+step 2- create a file python.config
+step 3- add below lines in it
+option_settings:
+	"aws:elasticbeanstalk:container:python":
+	  WSGIPath: application:application
+
+**** Elastic Beanstalk ****
+step 4- open aws console --> elastic beanstalk --> create application
+step 5- select platform --> Python (selects environment automatically)
+step 6- Application code --> select sample application --> create application
+
+**** Pipeline ****
+step 7- open aws console --> codepipeline --> create pipeline 
+step 8- Pipeline settings --> give name --> keep everythin else default --> next
+step 9- Add source stage --> select github --> connect to github --> authenticate request --> select repository --> branch: main --> next
+step 10- Add built stage --> skip for now
+step 11- Add deploy stage --> select deploy provider --> AWS Elastic Beanstalk --> Region:keep default --> Application name:elastic beanstalk name --> environment name (it will show) --> Next
+step 12- create pipeline
+
+
