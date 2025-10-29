@@ -1,0 +1,89 @@
+--- Curse of dimensioinality ---
+
+The curse of dimensionality refers to various problems that arise when working with high-dimensional data.
+
+-- Main issues:
+1. Sparse data - As dimensions increase, data points become increasingly spread out. The volume of space grows exponentially, 
+so you need exponentially more data to maintain the same density.
+2. Distance becomes meaningless - In high dimensions, the distance between the nearest and farthest points becomes similar, making distance-based algorithms 
+(like k-nearest neighbors) less effective.
+3. Computational cost - More dimensions mean exponentially more calculations and storage requirements.
+
+-- Impact:
+This affects machine learning, data mining, and optimization - models become harder to train, overfit more easily, and require massive amounts of data. 
+That's why dimensionality reduction techniques (like PCA) are so important.
+
+--- Dimensionality Reduction ---
+Goal: Transform high-dimensional data into lower dimensions while preserving important information.
+
+-- Why it matters in unsupervised learning:
+- No labels to guide which features are important
+- Must discover inherent structure in data itself
+- Reduces noise and computational complexity
+- Enables visualization (2D/3D)
+- Improves clustering and pattern discovery
+
+Using Correlation for Dimensionality Reduction
+1. Correlation-based Feature Selection
+Removing highly correlated features: If two features are highly correlated (e.g., correlation > 0.9), they provide redundant information
+- Keep one, drop the other
+- Simple and interpretable approach
+
+Example:
+If feature A and B have correlation = 0.95
+→ Drop one of them (usually keep the one with higher variance or domain relevance)
+
+2. Limitations
+- Only captures linear relationships:
+- Correlation measures linear dependence
+- Misses non-linear patterns that PCA or autoencoders might capture
+- Pairwise analysis: Only looks at pairs of features
+- Doesn't capture complex multi-feature interactions
+- No new features created: Just removes existing ones
+- Doesn't combine information like PCA does
+
+3. When to Use Correlation
+Good for:
+- Quick preprocessing step
+- When interpretability is crucial (original features preserved)
+- Removing obvious redundancies
+- Computational efficiency matters
+Not ideal when:
+- Non-linear relationships exist
+- You need optimal information compression
+- Want to create new composite features
+
+
+Key techniques for dimensionality reduction:
+
+1. PCA (Principal Component Analysis)
+- Finds directions of maximum variance
+- Creates uncorrelated components
+- Linear transformation
+- Most popular method
+
+2. t-SNE (t-Distributed Stochastic Neighbor Embedding)
+- Preserves local structure
+- Excellent for visualization
+- Non-linear, computationally intensive
+
+3. UMAP (Uniform Manifold Approximation)
+- Faster than t-SNE
+- Preserves both local and global structure
+- Better for general-purpose reduction
+
+4. Autoencoders
+- Neural network approach
+- Learns compressed representation
+- Can capture complex non-linear patterns
+
+--- Feature Extraction ---
+Definition: Creating new, more informative features from raw data by transforming or combining existing ones.
+In unsupervised context:
+- Discovers hidden patterns without supervision
+- Transforms data into more useful representation
+- Examples: extracting edges from images, topic modeling from text
+
+Difference from feature selection:
+- Feature extraction: creates new features (transformation)
+- Feature selection: chooses existing features (subset selection)
