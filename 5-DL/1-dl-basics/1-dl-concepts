@@ -1,0 +1,37 @@
+1. Neuron
+-- A neuron is the fundamental computational unit in a neural network, inspired by biological neurons in the brain. 
+In deep learning, an artificial neuron:
+- Receives multiple inputs, each with an associated weight that determines its importance
+- Computes a weighted sum of these inputs plus a bias term: z = (w₁×x₁ + w₂×x₂ + ... + wₙ×xₙ) + b
+- Applies an activation function to produce an output: a = f(z)
+
+2. Perceptron
+-- The perceptron is the simplest type of artificial neuron and one of the earliest neural network models (invented in 1958). 
+It works by:
+- Taking binary inputs (0 or 1)
+- Multiplying each input by a weight
+- Summing everything up
+- Applying a step function: output 1 if the sum exceeds a threshold, otherwise output 0
+- The key limitation is that a single perceptron can only learn linearly separable patterns
+
+3. Input Layer
+- The input layer is the first layer of a neural network where raw data enters the system. 
+
+4. Hidden Layer
+- Hidden layers sit between the input and output layers,  They're called "hidden" because their values aren't directly observable
+- Each hidden layer transforms the data into increasingly abstract representations.
+
+5. Activation Function
+- non-linear transformation applied to a neuron's weighted sum. 
+- Common activation functions:
+-- ReLU (Rectified Linear Unit): f(x) = max(0, x)
+-- Sigmoid: f(x) = 1/(1 + e^-x)
+-- Tanh: f(x) = (e^x - e^-x)/(e^x + e^-x)
+-- Softmax: Converts a vector of numbers into probabilities that sum to 1.
+
+6. Output layer
+- the final layer that produces the network's prediction.
+- For regression (predicting continuous values): Typically one neuron with a linear activation function.
+- For binary classification (yes/no decisions): One neuron with sigmoid activation outputting a probability between 0 and 1.
+- For multi-class classification (choosing one category): Multiple neurons (one per class) with softmax activation, producing a probability distribution. 
+- For multi-label classification (multiple categories possible): Multiple neurons with sigmoid activations, each independently predicting presence/absence. 

@@ -1,0 +1,64 @@
+- What is Dropout?
+- During training, randomly set a fraction of neuron outputs to zero.
+- During testing/inference: Use all neurons but scale their outputs.
+
+How Dropout Works - The Mathematics
+Training Phase:
+For dropout rate p (e.g., 0.5 = 50%):
+1. Generate random mask: m ~ Bernoulli(1-p)
+   m = [1, 0, 1, 0, 1, 1, 0, 1]  (random 0s and 1s)
+
+2. Apply mask to activations:
+   h_dropout = h × m / (1-p)
+                    ↑
+           Inverted dropout scaling
+
+3. Forward propagate with masked activations
+
+Why Scale by 1/(1-p)?
+- Inverted dropout keeps the expected value constant:
+- Without scaling:
+  Expected value = (1-p) × h
+  At test time, all neurons active → expected value = h
+  MISMATCH!
+- With scaling:
+  Expected value = (1-p) × h / (1-p) = h
+  At test time, expected value = h
+  MATCH! ✓
+
+-- Standard Dropout vs Inverted Dropout --
+- Standard Dropout (original paper):
+Training:
+h = h × mask  # No scaling
+Testing:
+h = h × (1-p)  # Scale down by keep probability
+Problem: Must remember to scale during testing
+
+- Inverted Dropout (modern practice):
+Training:
+h = h × mask / (1-p)  # Scale up during training
+Testing:
+h = h  # No change needed
+
+
+--Where to Apply Dropout
+1. Fully Connected Layers
+Best practice: Apply dropout after activation functions
+2. Convolutional Layers
+Why less dropout in Conv layers?
+- Convolutional layers have fewer parameters (weight sharing)
+- Spatial structure provides implicit regularization
+- If you do use dropout, use lower rates (0.1-0.2)
+3. Recurrent Layers 
+For RNNs:
+- Apply dropout to input-to-hidden connections
+- Apply dropout to layer-to-layer connections
+- DON'T apply to hidden-to-hidden (recurrent) connections
+  - This erases memory, ruins performance
+- Dropout Placement Guidelines:
+✅ After fully connected layers
+✅ Before output layer (sometimes)
+✅ In deeply connected networks
+✅ When you have limited data
+❌ Don't use on output layer for regression
+❌ Rarely needed in batch-normalized networks

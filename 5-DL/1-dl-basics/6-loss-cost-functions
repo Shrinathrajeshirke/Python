@@ -1,0 +1,179 @@
+--- Loss and Cost Functions in Deep Learning ---
+- Loss and cost functions are how we measure how wrong our neural network's predictions are. 
+- Loss Function (L): Error for a single training example
+- L(ŷ, y) = how wrong is one prediction?
+- Cost Function (J): Average error across the entire dataset
+- J = (1/m) × Σ L(ŷ⁽ⁱ⁾, y⁽ⁱ⁾)
+where m = number of examples
+
+1. Regression Loss Functions
+a.
+Mean Squared Error (MSE) - Most Popular for Regression
+Formula:
+MSE = (1/m) × Σ(y - ŷ)²
+For a single example:
+L = (y - ŷ)²
+When to use:
+- Predicting continuous values (house prices, temperature, stock prices)
+- When you want to penalize large errors heavily
+- Default choice for regression
+Characteristics:
+- Penalizes large errors heavily (squared term)
+- Sensitive to outliers (one extreme error dominates)
+- Always positive
+- Differentiable everywhere
+
+b. 
+Mean Absolute Error (MAE) - Robust Alternative
+Formula:
+MAE = (1/m) × Σ|y - ŷ|
+For a single example:
+L = |y - ŷ|
+When to use:
+- When you have outliers in your data
+- When all errors should be weighted equally (linear penalty)
+- When you want a more robust metric
+Characteristics:
+- Linear penalty (not squared)
+- Less sensitive to outliers than MSE
+- Harder to optimize (not differentiable at y = ŷ)
+
+c. 
+Huber Loss - Best of Both Worlds
+Formula:
+Huber(y, ŷ) = 
+  (1/2)(y - ŷ)²           if |y - ŷ| ≤ δ
+  δ|y - ŷ| - (1/2)δ²      if |y - ŷ| > δ
+When to use:
+- When you want MSE's smoothness but MAE's robustness
+- Datasets with some outliers
+- Balancing between the two extremes
+Characteristics:
+- Quadratic for small errors (like MSE)
+- Linear for large errors (like MAE)
+- Differentiable everywhere
+- Robust to outliers
+- The threshold δ (delta) is a hyperparameter you choose.
+
+d. Mean Squared Logarithmic Error (MSLE)
+Formula:
+MSLE = (1/m) × Σ(log(y + 1) - log(ŷ + 1))²
+When to use:
+- When you care about percentage error rather than absolute error
+- Targets with exponential growth (population, sales)
+- When small and large values should be treated similarly
+
+
+2. Binary Classification Loss Functions
+a. 
+Formula:
+Binary Cross-Entropy = -[y log(ŷ) + (1-y) log(1-ŷ)]
+Where:
+y = actual label (0 or 1)
+ŷ = predicted probability (0 to 1)
+When to use:
+- Binary classification (spam/not spam, cat/dog)
+- When output layer uses sigmoid activation
+- Default choice for two-class problems
+Why this works:
+- Convex function - guarantees finding global minimum
+- Differentiable everywhere
+- Penalizes confident wrong predictions heavily
+- Pairs perfectly with sigmoid activation
+
+b. 
+Hinge Loss - Used in SVMs
+Formula:
+Hinge Loss = max(0, 1 - y × ŷ)
+Where y ∈ {-1, +1} and ŷ is raw output (not probability)
+When to use:
+- Support Vector Machines (SVMs)
+- When you want maximum margin classification
+- Not common in deep neural networks
+Characteristics:
+- Penalizes predictions on wrong side of margin
+- Zero loss for correct predictions beyond margin
+- Not differentiable at y × ŷ = 1
+
+3. Multi-Class Classification Loss Functions
+a.
+Categorical Cross-Entropy - Standard for Multi-Class
+Formula:
+Categorical Cross-Entropy = -Σ y_i log(ŷ_i)
+Where:
+y = one-hot encoded true label [0,1,0,0,...]
+ŷ = predicted probability distribution (from softmax)
+When to use:
+= Multi-class classification (classifying images into 10 categories)
+- When each example belongs to exactly one class
+- With softmax activation in output layer
+- When labels are one-hot encoded
+Why it works:
+- Only the true class contributes to loss (others multiply by 0)
+- Encourages high probability for correct class
+- Works seamlessly with softmax
+
+b. 
+Sparse Categorical Cross-Entropy - Memory Efficient Version
+- Formula:
+Same as categorical cross-entropy, but labels are integers instead of one-hot vectors
+When to use:
+- Same as categorical cross-entropy
+- When you have many classes (saves memory)
+- Labels are integers (0, 1, 2, ...) not one-hot encoded
+
+4. Multi-Label Classification Loss Functions
+a. 
+Binary Cross-Entropy (per label)
+When to use:
+- Each example can belong to multiple classes simultaneously
+- Tagging images (beach AND sunset AND ocean)
+- Text classification with multiple topics
+How it works:
+- Treat each label independently and use binary cross-entropy for each:
+Total Loss = Average of binary cross-entropy across all labels
+
+5.Advanced/Specialized Loss Functions
+a.
+Focal Loss - Handling Class Imbalance
+Formula:
+Focal Loss = -α(1 - ŷ)^γ log(ŷ)
+When to use:
+- Severe class imbalance (99% negative, 1% positive)
+- Object detection (YOLO, RetinaNet)
+- When easy examples dominate training
+
+b.
+Kullback-Leibler Divergence (KL Divergence)
+Formula:
+KL(P||Q) = Σ P(x) log(P(x)/Q(x))
+When to use:
+- Variational Autoencoders (VAEs)
+- Measuring difference between probability distributions
+- Knowledge distillation
+Characteristics:
+- Not symmetric: KL(P||Q) ≠ KL(Q||P)
+- Always non-negative
+- Zero when distributions are identical
+
+c.
+Contrastive Loss - For Similarity Learning
+Formula:
+L = (1-Y) × (1/2)D² + Y × (1/2)max(0, margin - D)²
+Where D is distance between embeddings
+When to use:
+- Siamese networks
+- Face verification/recognition
+- Learning embeddings where similar items should be close
+
+Triplet Loss - Advanced Similarity Learning
+Formula:
+L = max(0, D(anchor, positive) - D(anchor, negative) + margin)
+When to use:
+- Face recognition (FaceNet)
+- Learning embeddings
+- When you have anchor-positive-negative triplets
+How it works:
+- Anchor and positive should be close
+- Anchor and negative should be far apart
+- Margin ensures separation

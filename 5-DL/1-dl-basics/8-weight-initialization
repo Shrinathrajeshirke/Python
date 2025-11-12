@@ -1,0 +1,175 @@
+-- Why Weight Initialization Matters --
+
+1. All weights = 0
+- Every neuron computes the same output
+- All gradients are identical
+- Network can't break symmetry
+- RESULT: Network never learns anything useful
+
+2. Weights too large (e.g., random values 0-10)
+z = w₁x₁ + w₂x₂ + ... + w_n×x_n
+- If all w ≈ 5 and all x ≈ 1, then z ≈ 5n (explodes!)
+With sigmoid/tanh activation:
+  → Neurons saturate (output ≈ 1 or -1)
+  → Gradients ≈ 0 (vanishing gradients from the start!)
+- RESULT: Network can't learn 
+
+3. Weights too small (e.g., random values 0-0.0001)
+z = w₁x₁ + w₂x₂ + ... + w_n×x_n
+If all w ≈ 0.0001, then z ≈ 0
+- Activations are all near zero
+- Gradients are tiny
+- Signals die out in deep networks
+- RESULT: Network learns extremely slowly or not at all 
+
+4. Weights just right 
+- Signals flow through the network
+- Gradients are neither too large nor too small
+- Network learns efficiently
+- RESULT: Training converges! 
+
+-- The Core Principle: Variance Preservation --
+- Good initialization maintains signal variance as it flows through layers.
+The Goal:
+- Variance of outputs ≈ Variance of inputs
+- Variance of gradients stays constant during backprop
+
+--- Techniques ---
+1. Zero Initialization
+Formula:
+All weights = 0
+-- Why it fails completely:
+-- Forward pass:
+Hidden Layer 1:
+  Neuron 1: 0×x₁ + 0×x₂ + ... = 0
+  Neuron 2: 0×x₁ + 0×x₂ + ... = 0
+  Neuron 3: 0×x₁ + 0×x₂ + ... = 0
+All neurons output the same value!
+-- Backward pass:
+- All neurons receive same gradient
+- All weights update identically
+- Neurons remain identical forever
+-- The symmetry problem: All neurons in a layer remain identical. The network effectively has one neuron per layer.
+
+2. Random Initialization (Small Values)
+Formula:
+W ~ Uniform(-0.01, 0.01)
+or
+W ~ Normal(0, 0.01)
+- Better than zero, but still problematic:
+- For shallow networks (2-3 layers): Works okay
+- For deep networks (10+ layers):
+Layer 1 variance: 1.0
+Layer 5 variance: 0.3
+Layer 10 variance: 0.05
+Layer 20 variance: 0.0001  (signal vanished!)
+Problems:
+- Activations shrink to zero in deep networks
+Gradients become tiny
+- Early layers barely learn
+- When it was used:
+- Historical: Before better methods were discovered (pre-2010)
+- Very shallow networks only
+
+3. Random Initialization (Large Values)
+Formula:
+W ~ Uniform(-1, 1)
+or
+W ~ Normal(0, 1)
+-- Problems with sigmoid/tanh:
+Layer 1: z = Σ(w×x) ≈ large value
+       sigmoid(large) ≈ 1, gradient ≈ 0
+       
+Layer 2: Takes saturated inputs
+       Also saturates
+       
+Result: Vanishing gradients from the start!
+
+4. Xavier/Glorot Initialization 
+Formula:
+Xavier Uniform:
+W ~ Uniform(-√(6/(n_in + n_out)), √(6/(n_in + n_out)))
+avier Normal:
+W ~ Normal(0, √(2/(n_in + n_out)))
+Where:
+n_in = number of input units (fan-in)
+n_out = number of output units (fan-out)
+When to use:
+✅ Sigmoid activation
+✅ Tanh activation
+✅ Linear activation
+❌ NOT for ReLU (see He initialization)
+Why it works:
+Maintains variance through layers:
+Layer 1 variance: 1.0
+Layer 5 variance: 1.0
+Layer 10 variance: 1.0
+Layer 50 variance: 1.0  ✓ Stable!
+Prevents saturation:
+Weights are sized appropriately
+Activations stay in the "active" region
+Gradients flow properly
+
+5. He Initialization (Kaiming)
+Formula:
+He Uniform:
+W ~ Uniform(-√(6/n_in), √(6/n_in))
+He Normal (more common):
+W ~ Normal(0, √(2/n_in))
+Where n_in = number of input units
+when to use:
+✅ ReLU activation (most common!)
+✅ Leaky ReLU
+✅ PReLU
+✅ ELU
+✅ Default for modern deep learning
+
+6. LeCun Initialization - For SELU
+Formula:
+W ~ Normal(0, √(1/n_in))
+when to use:
+✅ SELU (Scaled Exponential Linear Unit) activation
+✅ Older networks (before ReLU dominance)
+
+7. Orthogonal Initialization - For RNNs
+The RNN Problem:
+RNNs multiply by the same weight matrix many times:
+h_t = W × h_{t-1}
+h_{t-1} = W × h_{t-2}
+h_t = W^t × h_0  (matrix multiplied t times!)
+This causes:
+- Exploding gradients if eigenvalues > 1
+- Vanishing gradients if eigenvalues < 1
+Orthogonal Solution:
+- Initialize weights as orthogonal matrices (eigenvalues exactly = 1).
+Properties:
+- W^T W = I  (identity matrix)
+- ||Wx|| = ||x||  (preserves norm)
+When to use:
+✅ RNN hidden-to-hidden weights
+✅ LSTM hidden state matrices
+✅ When you need gradient stability across time
+
+Quick decision guide:
+┌─ What activation function? ─┐
+│                              │
+├─ ReLU/Leaky ReLU/ELU ───────► He Initialization ⭐
+│                              
+├─ Sigmoid/Tanh ──────────────► Xavier Initialization
+│                              
+├─ SELU ──────────────────────► LeCun Initialization
+│                              
+└─ None (Linear) ─────────────► Xavier Initialization
+```
+```
+┌─ What layer type? ───────────┐
+│                              │
+├─ Fully Connected ───────────► He (for ReLU) ⭐
+│                              
+├─ Convolutional ─────────────► He with fan_out
+│                              
+├─ RNN/LSTM/GRU ──────────────► Orthogonal
+│                              
+├─ Residual/Skip ─────────────► Identity or small values
+│                              
+└─ Embedding ─────────────────► Normal(0, 0.1) or pretrained

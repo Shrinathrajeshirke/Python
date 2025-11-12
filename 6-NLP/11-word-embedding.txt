@@ -1,0 +1,66 @@
+Word Embeddings are numeric representations of words 
+in a lower-dimensional space, that capture semantic 
+and syntactic information.
+
+Types of word Embeddings
+1. Frequency based Embeddings
+    - 1. One-hot encoding
+    In this encoding scheme, each word in the 
+    vocabulary is represented as a unique vector, 
+    where the dimensionality of the vector is equal 
+    to the size of the vocabulary. The vector has 
+    all elements set to 0, except for the element 
+    corresponding to the index of the word in the 
+    vocabulary, which is set to 1.
+    - 2. Bag-of-Words (BoW) is a text representation
+     technique that represents a document as an
+     unordered set of words and their respective
+     frequencies. It discards the word order and
+     captures the frequency of each word in the
+     document, creating a vector representation.
+    - 3. Term frequency-inverse document frequency (TF-IDF)
+    Term Frequency-Inverse Document Frequency, 
+    commonly known as TF-IDF, is a numerical 
+    statistic that reflects the importance of a 
+    word in a document relative to a collection of 
+    documents (corpus). 
+2. Prediction based Embeddings
+    - 1. Word2Vec
+    Word2Vec is a neural approach for generating 
+    word embeddings. Capture the semantic relationships 
+    between words by mapping them to high-dimensional 
+    vectors. 
+    A. Continuous Bag of Words(CBOW)
+    The primary objective of CBOW is to predict a 
+    target word based on its context, which consists 
+    of the surrounding words in a given window. 
+    Given a sequence of words in a context window, 
+    the model is trained to predict the target word 
+    at the center of the window.
+    B. Skip-Gram
+    The Skip-Gram model learns distributed representations 
+    of words in a continuous vector space. The main 
+    objective of Skip-Gram is to predict context words 
+    (words surrounding a target word) given a target 
+    word. This is the opposite of the Continuous Bag 
+    of Words (CBOW) model, where the objective is to 
+    predict the target word based on its context.
+3. Contextualized word Embeddings
+    - 1. GloVe
+    - GloVe is trained on global word co-occurrence statistics. 
+    It leverages the global context to create word embeddings 
+    that reflect the overall meaning of words based on their 
+    co-occurrence probabilities. 
+    - this method, we take the corpus and iterate through 
+    it and get the co-occurrence of each word with other 
+    words in the corpus.
+    - 2. Fasttext
+    - Developed by Facebook, FastText extends Word2Vec by 
+    representing words as bags of character n-grams. 
+    This approach is particularly useful for handling 
+    out-of-vocabulary words and capturing morphological variations.
+    - 3. BERT (Bidirectional Encoder Representations from Transformers)
+    BERT is a transformer-based model that learns contextualized embeddings 
+    for words. It considers the entire context of a word by 
+    considering both left and right contexts, resulting 
+    in embeddings that capture rich contextual information.

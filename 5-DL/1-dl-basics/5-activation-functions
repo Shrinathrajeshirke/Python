@@ -1,0 +1,260 @@
+--- Activation functions ---
+- Activation functions are the non-linear transformations that give neural networks their power. 
+- With activation functions, each layer can learn non-linear transformations, enabling the network to approximate any function.
+
+1. Sigmoid (Logistic Function)
+Formula:
+σ(x) = 1 / (1 + e^(-x))
+Output Range:
+(0, 1)
+Derivative:
+σ'(x) = σ(x) × (1 - σ(x))
+Maximum: 0.25 (at x=0)
+When to Use:
+- Output layer for binary classification (predicting probabilities 0-1)
+- Gates in LSTM networks
+- NOT recommended for hidden layers
+Advantages:
+- Smooth gradient
+- Clear probability interpretation
+- Output always between 0 and 1
+Disadvantages:
+- Vanishing gradients: Derivative max is only 0.25, shrinks rapidly in deep networks
+- Not zero-centered: Outputs always positive, causes zig-zagging during optimization
+- Computationally expensive: Exponential calculation
+- Saturates: For large |x|, gradient ≈ 0, neurons "die"
+
+2. Tanh (Hyperbolic Tangent)
+Formula:
+tanh(x) = (e^x - e^(-x)) / (e^x + e^(-x))
+       = 2σ(2x) - 1
+Output Range:
+(-1, 1)
+Derivative:
+tanh'(x) = 1 - tanh²(x)
+Maximum: 1.0 (at x=0)
+When to Use:
+- Hidden layers in shallow networks
+- RNN/LSTM internal calculations
+- Mostly replaced by ReLU in modern deep networks
+Advantages:
+- Zero-centered: Outputs range from -1 to 1, better than sigmoid
+- Stronger gradients than sigmoid (max = 1.0 vs 0.25)
+- Smooth and differentiable
+Disadvantages:
+- Still suffers from vanishing gradients (though less than sigmoid)
+- Computationally expensive
+- Saturates at extreme values
+
+3. ReLU (Rectified Linear Unit) 
+Formula:
+ReLU(x) = max(0, x)
+        = x  if x > 0
+        = 0  if x ≤ 0
+Output Range: [0, ∞]
+Derivative:
+ReLU'(x) = 1  if x > 0
+         = 0  if x ≤ 0
+When to Use:
+- Default choice for hidden layers in most networks
+- CNNs (Convolutional Neural Networks)
+- Deep feedforward networks
+- Any network suffering from vanishing gradients
+Advantages:
+- No vanishing gradient problem for positive inputs (gradient = 1)
+- Computationally efficient: Just a simple max operation
+- Sparse activation: About 50% of neurons output zero, creating sparse representations
+- Faster convergence: Networks train 6x faster than sigmoid/tanh
+- Simple to implement
+Disadvantages:
+- Dying ReLU problem: Neurons can get stuck outputting 0 for all inputs
+- If weights push input negative, gradient becomes 0
+- Neuron never recovers, becomes "dead"
+Can affect 10-40% of neurons in poorly initialized networks
+- Not zero-centered: All outputs ≥ 0
+- Unbounded output: Can lead to exploding activations
+
+4. Leaky ReLU
+Formula:
+Leaky ReLU(x) = x      if x > 0
+              = 0.01x  if x ≤ 0
+Output Range:
+(-∞, ∞)
+Derivative:
+Leaky ReLU'(x) = 1     if x > 0
+               = 0.01  if x ≤ 0
+When to Use:
+- When you suspect dying ReLU is a problem
+- Alternative to standard ReLU for hidden layers
+- When you want all neurons to have a chance to activate
+Advantages:
+- Solves dying ReLU: Small gradient (0.01) for - - negative values keeps neurons alive
+- Computationally efficient
+- All benefits of ReLU with fewer dead neurons
+Disadvantages:
+- The slope 0.01 is arbitrary (why not 0.02 or 0.001?)
+- Results not always better than ReLU
+- Still not zero-centered
+Variants:
+
+Parametric ReLU (PReLU): The slope α is learned during training
+  PReLU(x) = x   if x > 0
+           = αx  if x ≤ 0  (α is learned)
+
+
+5. ELU (Exponential Linear Unit)
+Formula:
+ELU(x) = x                if x > 0
+       = α(e^x - 1)       if x ≤ 0
+(Usually α = 1.0)
+Output Range:
+(-α, ∞)
+Derivative:
+ELU'(x) = 1              if x > 0
+        = ELU(x) + α     if x ≤ 0
+When to Use:
+- When you want better performance than ReLU
+- Networks where mean activation closer to zero is beneficial
+- When you can afford slightly more computation
+Advantages:
+- Closer to zero mean: Negative values push mean activation toward zero
+- No dying ReLU problem: Smooth curve for negative values
+- Better gradient flow than ReLU
+More robust to noise
+Disadvantages:
+- Computationally expensive: Exponential calculation for negative values
+- Slower than ReLU
+- Not as widely used, less battle-tested
+
+6. GELU (Gaussian Error Linear Unit)
+Formula:
+GELU(x) = x × Φ(x)
+Where Φ(x) is the cumulative distribution function of standard normal distribution.
+Approximation:
+GELU(x) ≈ 0.5x(1 + tanh[√(2/π)(x + 0.044715x³)])
+Output Range:
+(-∞, ∞)
+Shape:
+Similar to ELU but smoother
+When to Use:
+- Transformer models (BERT, GPT)
+- State-of-the-art NLP models
+- When you want probabilistic interpretation
+Advantages:
+Stochastic regularization: Weights inputs by their magnitude
+- Smooth, non-monotonic
+- Better performance in transformers
+- Probabilistic interpretation
+- Disadvantages:
+- Computationally expensive
+- More complex to implement
+- Overkill for simple problems
+
+7. Swish (SiLU)
+Formula:
+Swish(x) = x × σ(βx)
+         = x / (1 + e^(-βx))
+(Usually β = 1)
+Output Range:
+(-∞, ∞)
+When to Use:
+- Deep networks (40+ layers)
+- Mobile and embedded models (MobileNet)
+- When you want smoother activation than ReLU
+Advantages:
+- Smooth and non-monotonic
+- Self-gated (uses its own value in sigmoid)
+- Performs better than ReLU in very deep networks
+- Discovered by neural architecture search
+Disadvantages:
+- Computationally more expensive than ReLU
+- Benefits not always significant
+- Less interpretable
+
+
+8. Softmax (Output Layer Only)
+Formula:
+Softmax(x_i) = e^(x_i) / Σ(e^(x_j))
+Output Range:
+(0, 1) and outputs sum to 1
+When to Use:
+- Output layer for multi-class classification (only here!)
+- Attention mechanisms
+Advantages:
+- Converts logits to probability distribution
+- All outputs sum to 1.0
+- Differentiable
+- Clear probabilistic interpretation
+Disadvantages:
+- Never use in hidden layers (causes vanishing gradients)
+- Computationally expensive for many classes
+Sensitive to outliers
+
+9. Softplus
+Formula:
+Softplus(x) = ln(1 + e^x)
+Output Range:
+(0, ∞)
+Shape:
+Smooth version of ReLU
+When to Use:
+- When you want smooth ReLU alternative
+- Variational autoencoders (parameterizing variance)
+Advantages:
+- Smooth everywhere (differentiable at 0)
+- Always positive
+- Smooth approximation to ReLU
+Disadvantages:
+- Computationally expensive
+- Not commonly used
+- Small performance gains over ReLU
+
+10. Hard Sigmoid & Hard Swish (Mobile/Efficient Models)
+Hard Sigmoid:
+Hard Sigmoid(x) = max(0, min(1, (x + 1)/2))
+Hard Swish:
+Hard Swish(x) = x × Hard Sigmoid(x)
+When to Use:
+- Mobile and edge devices
+- When computational efficiency is critical
+- MobileNet architectures
+Advantages:
+- Very computationally efficient
+- No exponentials
+- Good approximation to sigmoid/swish
+Disadvantages:
+- Less smooth
+- Slight performance degradation vs smooth versions
+
+
+Practical Decision Guide
+For Hidden Layers:
+Start here → ReLU
+            ↓ (if dying ReLU is a problem)
+         Leaky ReLU / ELU
+            ↓ (for transformers/NLP)
+         GELU
+            ↓ (for very deep nets)
+         Swish
+For Output Layers:
+Binary classification → Sigmoid
+Multi-class classification → Softmax
+Regression → Linear (no activation) or ReLU (if output must be positive)
+My Recommendations:
+General purpose (90% of cases):
+Hidden layers: ReLU
+Binary output: Sigmoid
+Multi-class output: Softmax
+
+When ReLU doesn't work well:
+Try Leaky ReLU first (easy swap)
+Then ELU if you can afford the compute
+
+For transformers/NLP:
+Use GELU (proven in BERT, GPT)
+
+For very deep networks (ResNets, etc.):
+Consider Swish or stick with ReLU + batch norm
+
+For mobile/embedded:
+Hard Swish for efficiency

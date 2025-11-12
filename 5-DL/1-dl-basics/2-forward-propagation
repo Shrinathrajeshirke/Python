@@ -1,0 +1,27 @@
+-- Forward Propagation --
+
+- Forward propagation is the process of passing input data through a neural network layer by layer to generate predictions.
+
+- process 
+1. Input Layer
+-  If you have a feature vector X = [x₁, x₂, x₃, ..., xₙ], these values are simply passed to the first hidden layer. 
+- No computation happens here—the input layer just holds your data.
+2. First Hidden Layer Computation
+- a - Weighted Sum (Linear Transformation)
+-- z₁ = (w₁₁×x₁ + w₁₂×x₂ + ... + w₁ₙ×xₙ) + b₁
+-- Each input is multiplied by its connection weight, all products are summed, and a bias term is added. If the layer has multiple neurons, this happens for each one.
+- b - Activation Function
+-- a₁ = f(z₁)
+-- The weighted sum passes through an activation function (like ReLU, sigmoid, etc.) to introduce non-linearity. This activated output becomes the neuron's final output.
+3. Subsequent Hidden Layers
+- The outputs from the first hidden layer [a₁, a₂, a₃, ...] now become the inputs for the second hidden layer. The same process repeats.
+4. Output layers
+- The final hidden layer's outputs feed into the output layer, where:
+- The same weighted sum and activation process occurs
+- The activation function is chosen based on your task (sigmoid for binary classification, softmax for multi-class, linear for regression)
+- The result is your network's prediction: ŷ (y-hat)
+
+-- Why Forward Propagation Matters
+= During Training: Forward propagation generates predictions that are compared to actual labels to compute the loss. This loss then drives backward propagation (backpropagation), which updates weights to improve predictions.
+- During Inference: Once trained, forward propagation is all you need to make predictions on new data. The network simply propagates inputs forward through its learned weights to produce outputs.
+- Efficiency Considerations: Modern frameworks use matrix operations to compute forward propagation for entire batches simultaneously, making it highly efficient on GPUs. Instead of processing one example at a time, you can process hundreds or thousands in parallel.

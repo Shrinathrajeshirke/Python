@@ -1,0 +1,285 @@
+1. Batch Gradient Descent (Vanilla Gradient Descent)
+How it works:
+1. Compute loss on ENTIRE dataset
+2. Compute gradients for all parameters
+3. Update weights:
+   W = W - α × ∇W
+Where:
+α (alpha) = learning rate
+∇W = gradient of loss with respect to weights
+Advantages:
+- Stable convergence
+- Guaranteed to converge to global minimum (for convex functions)
+- Smooth weight updates
+Disadvantages:
+- Extremely slow - processes entire dataset before one update
+- Memory intensive - must hold all data in memory
+- Can't handle online learning (streaming data)
+- Stuck in local minima for non-convex functions
+When to use:
+- Almost never in practice - too slow for deep learning
+- Maybe for tiny datasets (< 1000 examples)
+
+2. Stochastic Gradient Descent (SGD)
+How it works:
+For each training example:
+  1. Compute loss on ONE example
+  2. Compute gradients
+  3. Update weights immediately:
+     W = W - α × ∇W
+Advantages:
+- Much faster updates
+- Can handle online learning
+- Can escape shallow local minima (due to noise)
+- Memory efficient
+Disadvantages:
+- Very noisy updates - gradients fluctuate wildly
+- Unstable convergence - loss zigzags
+- Slow overall convergence
+- Computationally inefficient (can't leverage vectorization)
+When to use:
+- Online learning scenarios
+- When you want to add noise to escape bad local minima
+- Rarely used alone in modern deep learning
+
+
+3. Mini-Batch Gradient Descent ⭐ The Standard Approach
+How it works:
+1. Divide dataset into small batches (e.g., 32, 64, 128 examples)
+2. For each batch:
+   - Compute loss on the batch
+   - Compute gradients (averaged over batch)
+   - Update weights:
+     W = W - α × ∇W_batch
+Advantages:
+- Best of both worlds - balance between speed and stability
+- GPU efficient - can process batches in parallel
+- Less noisy than SGD, faster than batch GD
+- Generalization: Some noise helps avoid overfitting
+- Standard in modern deep learning
+Disadvantages:
+- Still has some challenges that advanced optimizers solve
+When to use:
+- Default choice - almost always
+The "SGD" in frameworks usually means mini-batch SGD
+
+
+4. Momentum Adding Memory
+The Idea:
+Like a ball rolling downhill - it builds up velocity and doesn't stop at every bump.
+Formula:
+v_t = β × v_{t-1} + ∇W          (velocity)
+W = W - α × v_t                  (update)
+Where:
+v = velocity (exponentially weighted average of gradients)
+β = momentum coefficient (typically 0.9)
+Advantages:
+- Accelerates convergence - moves faster in consistent directions
+- Dampens oscillations - smooths out noise
+- Helps escape local minima - momentum carries over small bumps
+- Works well in ravines - builds speed along the valley
+Disadvantages:
+- Can overshoot minima with too high momentum
+- Still uses fixed learning rate
+
+
+5. Nesterov Accelerated Gradient (NAG)
+The Idea:
+"Look before you leap" - compute gradient at where momentum would take you, not where you are.
+Formula:
+v_t = β × v_{t-1} + ∇W(W - β × v_{t-1})    (look ahead!)
+W = W - α × v_t
+advantages:
+- More responsive to changes
+- Better at slowing down when approaching minimum
+- Less overshooting than regular momentum
+When to use:
+- When you want momentum benefits with better control
+- Less common than plain momentum in practice
+
+
+6. AdaGrad (Adaptive Gradient) ⭐ Per-Parameter Learning Rates
+The Idea:
+Give bigger updates to infrequently updated parameters, smaller updates to frequently updated ones.
+Formula:
+G_t = G_{t-1} + (∇W)²              (accumulate squared gradients)
+W = W - (α / √(G_t + ε)) × ∇W      (adaptive learning rate)
+Where:
+G = sum of squared gradients (per parameter)
+ε = small number (e.g., 1e-8) to avoid division by zero
+Advantages:
+- No manual learning rate tuning per parameter
+- Great for sparse data (NLP, recommender systems)
+- Well-suited for features with different frequencies
+Disadvantages:
+- Learning rate monotonically decreases (G keeps growing)
+- Eventually stops learning (learning rate → 0)
+- Not ideal for non-convex deep networks
+When to use:
+- Sparse data problems
+- NLP tasks with word embeddings
+- Rarely used for modern deep learning (RMSprop and Adam are better)
+
+
+7. RMSprop (Root Mean Square Propagation) ⭐ Popular Choice
+The Idea:
+Fix AdaGrad's problem by using a moving average instead of accumulating all gradients.
+Formula:
+E[g²]_t = β × E[g²]_{t-1} + (1-β) × (∇W)²    (moving average of squared gradients)
+W = W - (α / √(E[g²]_t + ε)) × ∇W             (adaptive update)
+Where:
+E[g²] = exponentially weighted average of squared gradients
+β = decay rate (typically 0.9)
+How it's better than AdaGrad:
+AdaGrad: G = g₁² + g₂² + g₃² + g₄² + ... (grows forever)
+RMSprop: E[g²] = 0.9×E[g²] + 0.1×g² (recent gradients matter more)
+Advantages:
+- Adaptive learning rates per parameter
+- Doesn't diminish to zero like AdaGrad
+- Works well for RNNs and non-stationary problems
+- Can handle noisy gradients
+Disadvantages:
+- Still requires manual learning rate tuning (though less sensitive)
+- No momentum component
+Typical hyperparameters:
+Learning rate (α): 0.001
+Decay rate (β): 0.9
+When to use:
+- RNNs and LSTMs
+- Non-stationary problems
+- When Adam seems unstable
+
+
+8. Adam (Adaptive Moment Estimation) ⭐⭐⭐ Most Popular
+The Idea:
+Combine the best of momentum and RMSprop.
+Formula:
+m_t = β₁ × m_{t-1} + (1-β₁) × ∇W          (first moment: momentum)
+v_t = β₂ × v_{t-1} + (1-β₂) × (∇W)²       (second moment: RMSprop)
+
+m̂_t = m_t / (1 - β₁ᵗ)                      (bias correction)
+v̂_t = v_t / (1 - β₂ᵗ)                      (bias correction)
+
+W = W - α × m̂_t / (√v̂_t + ε)              (update)
+Where:
+m = first moment (mean of gradients) - like momentum
+v = second moment (variance of gradients) - like RMSprop
+Bias correction adjusts for initial zero values
+Default hyperparameters:
+Learning rate (α): 0.001
+β₁ (momentum): 0.9
+β₂ (RMSprop): 0.999
+ε (stability): 1e-8
+Advantages:
+- Best all-around optimizer for most problems
+- Adaptive learning rates per parameter
+- Momentum helps with convergence
+- Works out of the box with default hyperparameters
+- Computationally efficient
+- Handles sparse gradients well
+- Robust to noisy gradients
+Disadvantages:
+- Can converge to suboptimal solutions in some cases
+- Might not generalize as well as SGD with momentum (debated)
+- Uses more memory (stores m and v for each parameter)
+Why it's so popular:
+Adam = Momentum + RMSprop + Bias Correction + Works Great
+When to use:
+- Default choice for 90% of deep learning problems
+- When you don't want to tune hyperparameters extensively
+- CNNs, RNNs, Transformers, GANs
+
+9. AdamW (Adam with Weight Decay) 
+The Idea:
+Fixes how Adam handles L2 regularization (weight decay).
+Formula:
+Same as Adam, but:
+W = W - α × (m̂_t / (√v̂_t + ε) + λ × W)
+                                    ↑
+                            Weight decay term
+Why it matters:
+In regular Adam, L2 regularization gets tangled with adaptive learning rates. AdamW decouples them for better regularization.
+Advantages:
+- Better generalization than Adam
+- More effective weight decay
+- Current best practice for many applications
+When to use:
+- Transformers (BERT, GPT)
+- When you need strong regularization
+- Modern default choice over Adam
+
+10. Nadam (Nesterov + Adam)
+The Idea:
+Combine Nesterov momentum with Adam's adaptive learning rates.
+Advantages:
+- Slightly better than Adam in some cases
+More responsive updates
+When to use:
+- When Adam is working but you want a small boost
+Less common than Adam
+
+11. AdaMax (Infinity Norm Variant of Adam)
+The Idea:
+Instead of L2 norm (square root), use infinity norm (max).
+Formula:
+u_t = max(β₂ × u_{t-1}, |∇W|)    (infinity norm)
+W = W - (α / u_t) × m_t
+When to use:
+- Some NLP tasks
+- When gradients have large variation
+- Less popular than Adam
+
+12. Adadelta (No Manual Learning Rate)
+The Idea:
+Completely eliminate the need for a manual learning rate.
+Formula:
+Uses running averages of both gradients and updates to automatically determine learning rate.
+Advantages:
+- No learning rate hyperparameter
+- Adaptive per parameter
+Disadvantages:
+- Rarely outperforms Adam
+- Less intuitive
+When to use:
+- Rarely - Adam is usually better
+
+13. SGD with Learning Rate Scheduling
+The Idea:
+Start with a large learning rate, gradually decrease it.
+Common schedules:
+- Step Decay:
+Epochs 1-10:   lr = 0.1
+Epochs 11-20:  lr = 0.01
+Epochs 21-30:  lr = 0.001
+- Exponential Decay:
+lr_t = lr_0 × e^(-kt)
+- Cosine Annealing:
+lr_t = lr_min + (lr_max - lr_min) × (1 + cos(πt/T)) / 2
+- Warm Restarts:
+Periodically reset learning rate to high value
+Creates "restart" effect
+When to use:
+- With SGD+Momentum for state-of-the-art results
+- When training time allows experimentation
+- Computer vision competitions
+
+How to Choose an Optimizer - Decision Guide
+Quick Start (90% of cases):
+1. Try Adam (or AdamW) with default hyperparameters
+2. If it works, you're done!
+3. If not, keep reading...
+More Detailed Guide:
+-- For Computer Vision (CNNs):
+Option 1: Adam/AdamW (lr=0.001) - Fast development
+Option 2: SGD+Momentum (lr=0.1, momentum=0.9) - Best final performance
+         + Learning rate schedule
+-- For NLP (Transformers, RNNs):
+Modern: AdamW (lr=3e-4) with cosine schedule
+-- Classic RNNs: RMSprop (lr=0.001)
+-- For Reinforcement Learning:
+Adam or RMSprop (training is already noisy)
+-- For Sparse Data:
+Adam or AdaGrad
+-- For Research/Competitions:
+SGD+Momentum with heavy tuning
+Often achieves best results but takes most effort

@@ -9,5 +9,6 @@ scikit-learn
 seaborn 
 matplotlib
 openpyxl
-statsmodel
+statsmodels
 plotly
+nltk

@@ -1,0 +1,49 @@
+--- Backward Propagation ---
+- backpropagation calculates how much each weight contributed to the prediction error and updates those weights to reduce future errors.
+- It's called "backward" because error information flows in reverse: from output → through hidden layers → back to input.
+
+-- The Mathematical Foundation: Chain Rule
+- Since the loss depends on the output, which depends on the previous layer, which depends on the layer before that, and so on, we use the chain rule to propagate gradients backward through the network.
+- To find how a weight in the hidden layer affects the loss:
+∂Loss/∂w_hidden = (∂Loss/∂output) × (∂output/∂hidden) × (∂hidden/∂w_hidden)
+
+-- Process
+1. Compute the loss
+- After forward propagation produces prediction ŷ, calculate the loss using a loss function:
+- Binary Classification (Binary Cross-Entropy):
+L = -[y log(ŷ) + (1-y) log(1-ŷ)]
+Regression (Mean Squared Error):
+L = (1/2)(y - ŷ)²
+Multi-class Classification (Categorical Cross-Entropy):
+L = -Σ(y_i log(ŷ_i))
+2. Output layer gradient
+- Calculate how much the loss changes with respect to the output layer's pre-activation values (Z⁽ᴸ⁾).
+- For sigmoid activation with binary cross-entropy:
+∂L/∂Z⁽ᴸ⁾ = ŷ - y
+3. Compute Weight and Bias Gradients for Output Layer
+- Using the gradient from Step 2, calculate gradients for the output layer's weights and biases:
+∂L/∂W⁽ᴸ⁾ = (∂L/∂Z⁽ᴸ⁾) × A⁽ᴸ⁻¹⁾ᵀ
+∂L/∂b⁽ᴸ⁾ = ∂L/∂Z⁽ᴸ⁾
+- Where A⁽ᴸ⁻¹⁾ is the activation from the previous layer (which was the input to this layer).
+4. Propagate Gradient to Previous Layer
+- Now propagate the error backward to the previous hidden layer:
+∂L/∂A⁽ᴸ⁻¹⁾ = W⁽ᴸ⁾ᵀ × (∂L/∂Z⁽ᴸ⁾)
+- This tells us how the previous layer's outputs contributed to the loss.
+5. Apply Activation Function Derivative
+- To get the gradient with respect to the previous layer's pre-activation values:
+∂L/∂Z⁽ᴸ⁻¹⁾ = (∂L/∂A⁽ᴸ⁻¹⁾) ⊙ f'(Z⁽ᴸ⁻¹⁾)
+- The ⊙ symbol means element-wise multiplication. The derivative f' depends on the activation function:
+ReLU: f'(z) = 1 if z > 0, else 0
+Sigmoid: f'(z) = σ(z)(1 - σ(z))
+Tanh: f'(z) = 1 - tanh²(z)
+6. Repeat for All Hidden Layers
+- Steps 3-5 repeat for each hidden layer moving backward toward the input. For each layer l:
+∂L/∂W⁽ˡ⁾ = (∂L/∂Z⁽ˡ⁾) × A⁽ˡ⁻¹⁾ᵀ
+∂L/∂b⁽ˡ⁾ = ∂L/∂Z⁽ˡ⁾
+∂L/∂A⁽ˡ⁻¹⁾ = W⁽ˡ⁾ᵀ × (∂L/∂Z⁽ˡ⁾)
+∂L/∂Z⁽ˡ⁻¹⁾ = (∂L/∂A⁽ˡ⁻¹⁾) ⊙ f'(Z⁽ˡ⁻¹⁾)
+7. Update Weights and Biases
+- Once all gradients are computed, update the parameters using gradient descent:
+W⁽ˡ⁾ = W⁽ˡ⁾ - α × (∂L/∂W⁽ˡ⁾)
+b⁽ˡ⁾ = b⁽ˡ⁾ - α × (∂L/∂b⁽ˡ⁾)
+- Where α (alpha) is the learning rate, a hyperparameter controlling how big the weight updates are.
