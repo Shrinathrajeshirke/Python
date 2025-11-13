@@ -12,3 +12,6 @@ openpyxl
 statsmodels
 plotly
 nltk
+gensim
+tqdm
+bs4
